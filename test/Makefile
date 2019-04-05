@@ -1,10 +1,18 @@
 TST := $(SRC)/test
 
-CFLAGS := -I$(SRC) -Wall -Werror
+CFLAGS := -g -O2 -I$(SRC) -Wall -Werror
 
-.PHONY: test test_file test_lambda
-test: test_file test_lambda
+TEST_LIST := test_file test_lambda test_factorial test_result
+
+.PHONY: test $(TEST_LIST)
+test: $(TEST_LIST)
 	@echo done testing
+
+define do_test
+	rm -rf $@
+	gcc $(CFLAGS) $(TST)/$1 -o $@
+	./$@
+endef
 
 test_file:
 	rm -rf $@
@@ -15,3 +23,11 @@ test_lambda:
 	rm -rf $@
 	gcc $(CFLAGS) $(TST)/lambda.c -o $@
 	./$@
+
+test_factorial:
+	rm -rf $@
+	gcc $(CFLAGS) $(TST)/factorial.c -o $@
+	./$@
+
+test_result:
+	$(call do_test,result.c)
