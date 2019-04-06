@@ -18,8 +18,8 @@ void fcleanup(FILE** f) { fclose(*f); }
 extern inline
 __attribute__((nonnull (1, 2, 3)))
 Result fopen_process_close(
-    ccstr filename,
-    ccstr mode,
+    const char filename[],
+    const char mode[],
     int (*process)(FILE*) ///< closure with context that processes opened file
 )
 {
@@ -38,8 +38,8 @@ Result fopen_process_close(
 extern inline
 __attribute__((nonnull (1, 2)))
 bool fopenable(
-    ccstr filename,
-    ccstr mode
+    const char filename[],
+    const char mode[]
 )
 {
     FILE* file CLEANUP(fcleanup) = fopen(filename, mode);

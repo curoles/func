@@ -16,8 +16,6 @@
 
 #define CLEANUP(func) __attribute__((cleanup(func)))
 
-typedef char* cstr;
-typedef const char* ccstr;
 
 //int (*max)(int, int) = lambda (int, (int x, int y) { return x > y ? x : y; });
 //
