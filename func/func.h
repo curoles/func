@@ -9,9 +9,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define PURE     __attribute__ ((pure))
-#define UNUSED   __attribute__ ((unused))
+#define PURE       __attribute__ ((pure))
+#define UNUSED     __attribute__ ((unused))
+
 #define RET_NONULL __attribute__((returns_nonnull))
+
+#define CLEANUP(func) __attribute__((cleanup(func)))
 
 typedef char* cstr;
 typedef const char* ccstr;

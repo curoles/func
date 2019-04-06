@@ -8,7 +8,20 @@
 
 #include "func/file.h"
 
-int test_fopen_process_close()
+static
+bool test_cleanup()
+{
+    static const char filename[] = "Makefile";
+
+    void fcleanup(FILE** f) { fclose(*f); }
+
+    UNUSED FILE* file CLEANUP(fcleanup) = fopen(filename, "r");
+
+    return true;
+}
+
+static
+bool test_fopen_process_close()
 {
     static const char filename[] = "Makefile";
 
@@ -24,14 +37,20 @@ int test_fopen_process_close()
         return 0;
     }
 
-    int err = fopen_process_close(filename, "r", print_file);
+    Result res = fopen_process_close(filename, "r", print_file);
+    assert(res.type != ERR);
 
-    return err;
+    res = fopen_process_close(filename, "r", lambda(int, (FILE* file) {
+        return 123;}));
+    assert(res.type == SOME && res.val == 123);
+
+    return true;
 }
 
 int main()
 {
-    assert(0 == test_fopen_process_close());
+    assert(test_fopen_process_close());
+    assert(test_cleanup());
 
     return 0;
 }

@@ -10,27 +10,29 @@
 #include <errno.h>
 
 #include "func/func.h"
+#include "func/result.h"
+
+extern inline
+void fcleanup(FILE** f) { fclose(*f); }
 
 extern inline
 __attribute__((nonnull (1, 2, 3)))
-int fopen_process_close(
+Result fopen_process_close(
     ccstr filename,
     ccstr mode,
     int (*process)(FILE*) ///< closure with context that processes opened file
 )
 {
-    int err = 0;
-
     FILE* file = fopen(filename, mode);
 
     if (file == NULL) {
-        return errno;
-    } else {
-        err = process(file);
-        fclose(file);
+        return (Result){.type=ERR, .err=errno};
     }
 
-    return err;
+    Result res = {.type=SOME, .val=process(file)};
+    fclose(file);
+
+    return res;
 }
 
 extern inline
@@ -40,11 +42,7 @@ bool fopenable(
     ccstr mode
 )
 {
-    FILE* file = fopen(filename, mode);
-
-    if (file != NULL) {
-        fclose(file);
-    }
+    FILE* file CLEANUP(fcleanup) = fopen(filename, mode);
 
     return file != NULL;
 }
