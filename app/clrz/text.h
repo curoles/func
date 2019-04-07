@@ -8,6 +8,14 @@ typedef struct TextColorizer
 {
     enum TextType type;
 
+    const char* blanks;
+    const char* sln_comment;
+
+    const char*** kwrds;
+    unsigned nr_kw_types;
+    const unsigned* nr_kwrds;
+    const char** kwtype_clr; 
+
     union {
 
     struct {

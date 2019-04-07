@@ -10,25 +10,20 @@ test: $(TEST_LIST)
 	@echo done testing
 
 define do_test
-	rm -rf $@
-	gcc $(CFLAGS) $(TST)/$1 -o $@
-	./$@
+        @echo $@
+	@rm -rf $@
+	@$(TIME) gcc $(CFLAGS) $(TST)/$1 -o $@
+	@$(TIME) ./$@ > /dev/null
 endef
 
 test_file:
-	rm -rf $@
-	gcc $(CFLAGS) $(TST)/file.c -o $@
-	./$@
+	$(call do_test,file.c)
 
 test_lambda:
-	rm -rf $@
-	gcc $(CFLAGS) $(TST)/lambda.c -o $@
-	./$@
+	$(call do_test,lambda.c)
 
 test_factorial:
-	rm -rf $@
-	gcc $(CFLAGS) $(TST)/factorial.c -o $@
-	./$@
+	$(call do_test,factorial.c)
 
 test_result:
 	$(call do_test,result.c)

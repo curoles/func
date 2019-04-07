@@ -16,8 +16,12 @@ bool test_strhash()
     const unsigned int bad  = STRHASH("bad");
     const unsigned int ugly = STRHASH("ugly");
 
+    assert(good != bad && good != ugly && bad != ugly);
+
     assert(__builtin_constant_p(good));
-    //_Static_assert(__builtin_constant_p(good), "value shall be known to be constant at compile time");
+
+    const unsigned int good2 = strhash("good");
+    assert(!__builtin_constant_p(good2));
 
     assert(good == strhash("good"));
     assert(bad  == strhash("bad"));
@@ -30,6 +34,18 @@ bool test_strhash()
     default:
         assert(!"must be good");
     }*/
+
+    unsigned int str_hash = strhash("good");
+    if (str_hash == STRHASH("ok")) {
+        assert(0);
+    } else if (str_hash == STRHASH("all right")) {
+        assert(0);
+    } else if (str_hash == STRHASH("good")) {
+        //hit
+    } else {
+        assert(0);
+    }
+
 
     return true;
 }

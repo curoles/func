@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "func/func.h"
 #include "func/tcolor.h"
@@ -9,10 +10,9 @@
 #include "clrz/text.h"
 
 
-static const char keyword_clr[] = TCLR_BOLD TCLR_FG(220);
-static const char typeword_clr[] = TCLR_BOLD TCLR_FG(130);
+static const char comment_clr[]  = TCLR_FG(32);
 
-void colorize(const char in[], char out[], unsigned size, TextColorizer* clr)
+void colorize(const char in[], char out[], unsigned size, TextColorizer* txt)
 {
     static const char delimeters[] = " \t()[],;:<>+-!?'*";
 
@@ -21,49 +21,65 @@ void colorize(const char in[], char out[], unsigned size, TextColorizer* clr)
 
     while (*p != '\0')
     {
-        // skip white spaces, brackets, comma and etc.
-        while (strchr(delimeters, *p)) {
+        // skip white spaces
+        while (strchr(txt->blanks, *p)) {
             strncat(out, p, 1);
             ++p;
         }
 
-        size_t token_sz = strcspn(p, delimeters);
-        bool found_keyword = false;
+        if (isalpha(*p))
+        {
+            size_t token_sz = strcspn(p, delimeters);
+            bool found_keyword = false;
 
-        for (unsigned i = 0; i < clr->c_code.nr_keywords; ++i) {
-            const char* keyword = clr->c_code.keywords[i];
-            size_t keyword_sz = strlen(keyword); //TODO save keyword length
-            if (token_sz == keyword_sz && 0 == strncmp(p, keyword, keyword_sz)) {
-                strcat(out, keyword_clr);
-                strcat(out, keyword);strcat(out, TCLR_RESET);
-                found_keyword = true;
+            for (unsigned i = 0; i < txt->nr_kw_types && !found_keyword; ++i) {
+                const char** kwrds = txt->kwrds[i];
+                for (unsigned k = 0; k < txt->nr_kwrds[i]; ++k) {
+                    const char* keyword = kwrds[k];
+                    size_t keyword_sz = strlen(keyword);
+                    if (token_sz == keyword_sz && 0 == strncmp(p, keyword, keyword_sz)) {
+                        strcat(out, txt->kwtype_clr[i]);
+                        strcat(out, keyword);
+                        strcat(out, TCLR_RESET);
+                        found_keyword = true;
+                        break;
+                    }
+                }
+            }
+            if (!found_keyword) {strncat(out, p, token_sz);}
+            p += token_sz;
+
+        } else { // not alphabetic symbol
+            if (0 == strncmp(p, txt->sln_comment, strlen(txt->sln_comment))) {
+                strcat(out, comment_clr);
+                strcat(out, p);
+                strcat(out, TCLR_RESET);
                 break;
+            } else {
+                strncat(out, p, 1);
+                ++p;
             }
         }
 
-        if (!found_keyword)
-        for (unsigned i = 0; i < clr->c_code.nr_typewords; ++i) {
-            const char* keyword = clr->c_code.typewords[i];
-            size_t keyword_sz = strlen(keyword); //TODO save keyword length
-            if (token_sz == keyword_sz && 0 == strncmp(p, keyword, keyword_sz)) {
-                strcat(out, typeword_clr);
-                strcat(out, keyword);strcat(out, TCLR_RESET);
-                found_keyword = true;
-                break;
-            }
-        }
-
-        if (!found_keyword) {strncat(out, p, token_sz);}
-        p += token_sz;
     } 
 }
 
 TextType name2type(const char s[])
 {
-    static const char* clang[] = {"c", "C"};
+    static const char* clang[] = {"c", "C", NULL};
+    static const char* cpplang[] = {"c++", "C++", NULL};
+    static const char** all_types[] = {clang, cpplang};
 
     if (hasstr(s, clang, SIZEOF_ARRAY(clang))) {
         return TXT_C;
+    } else {
+        printf("Usage:\nclrz <file type>\nTypes:\n");
+        for (unsigned i = 0; i < SIZEOF_ARRAY(all_types); ++i) {
+            for (const char** t = all_types[i]; *t != NULL; ++t)
+                printf("%s ", *t);
+            puts("");
+        }
+        exit(1);
     }
 
     return TXT_UNKNOWN;
