@@ -1,9 +1,11 @@
 APP := $(SRC)/app
 
+APP_CFLAGS := -I$(APP) -I$(SRC) -Wall -Werror
+
 ifdef DEBUG
-APP_CFLAGS := -g -O2 -I$(SRC) -Wall -Werror
+APP_CFLAGS += -g -O2
 else
-APP_CFLAGS := -flto -O3 -I$(SRC) -Wall -Werror
+APP_CFLAGS += -flto -O3
 endif
 
 APP_LIST := clrz
@@ -15,8 +17,8 @@ app: $(APP_LIST)
 
 define do_app
 	rm -rf $@
-	gcc $(APP_CFLAGS) $< -o $@
+	gcc $(APP_CFLAGS) $^ -o $@
 endef
 
-clrz: $(APP)/clrz/clrz.c
+clrz: $(APP)/clrz/clrz.c $(APP)/clrz/text.c
 	$(call do_app)

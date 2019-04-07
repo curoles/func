@@ -16,6 +16,7 @@
 
 #define CLEANUP(func) __attribute__((cleanup(func)))
 
+#define SIZEOF_ARRAY(a) (sizeof(a)/sizeof(a[0]))
 
 //int (*max)(int, int) = lambda (int, (int x, int y) { return x > y ? x : y; });
 //
@@ -24,3 +25,8 @@
     return_type anon_func_name_ function_body \
     anon_func_name_; \
 })
+
+#define MAX(a,b) \
+({ typeof(a) a_ = (a); \
+   typeof(b) b_ = (b); \
+   a_ > b_ ? a_ : b_; })
