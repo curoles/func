@@ -3,7 +3,7 @@ TST := $(SRC)/test
 CFLAGS := -g -O2 -I$(SRC) -Wall -Werror
 
 TEST_LIST := test_file test_lambda test_factorial test_result
-TEST_LIST += test_foreach test_vector
+TEST_LIST += test_foreach test_vector test_string
 
 .PHONY: test $(TEST_LIST)
 test: $(TEST_LIST)
@@ -38,3 +38,6 @@ test_foreach:
 
 test_vector:
 	$(call do_test,vector.c)
+
+test_string:
+	$(call do_test,string.c)
