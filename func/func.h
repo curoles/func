@@ -16,6 +16,8 @@
 
 #define CLEANUP(func) __attribute__((cleanup(func)))
 
+#define TRANSPARENT_UNION __attribute__((transparent_union)) 
+
 #define SIZEOF_ARRAY(a) (sizeof(a)/sizeof(a[0]))
 
 //int (*max)(int, int) = lambda (int, (int x, int y) { return x > y ? x : y; });

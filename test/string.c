@@ -6,6 +6,7 @@
  */
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "func/strhash.h"
 

@@ -5,10 +5,10 @@
 #define new_V new_VectInt
 #define cleanup_V cleanup_VectInt
 #include "func/vector.h"
-#undef T
-#undef V
-#undef new_V
-#undef cleanup_V
+
+#if defined(T) || defined(V) || defined(new_V) || defined(cleanup_V)
+#error vector.h must undef all "template" macros
+#endif
 
 int main()
 {

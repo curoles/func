@@ -69,3 +69,9 @@ V new_V(unsigned init_sz)
 
     return v;
 }
+
+#undef T
+#undef V
+#undef new_V
+#undef cleanup_V
+
