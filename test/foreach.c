@@ -33,5 +33,13 @@ int main()
     ARRAY_FOREACH(str, decapitalize);
     assert(0 == strcmp(str, "abcd"));
 
+    int accum = 0;
+    void accumulate(unsigned int i) {
+        ++accum;
+    }
+
+    do_times(10, accumulate);
+    assert(accum == 10);
+
     return 0;
 }
