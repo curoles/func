@@ -10,27 +10,21 @@ int main()
     int a[] = {1,2,3,4,5};
     int sum = 0;
 
-    ARRAY_FOREACH(a, lambda(void, (unsigned i, int e) {
-        //printf("a[%u]=%d\n", i, e);
-        sum += e;
-    }))
+    ARRAY_FOREACH(a, i) {
+        sum += a[i];
+    }
 
     assert(sum == (1+2+3+4+5));
 
     char str[] = "abcd";
 
-    ARRAY_FOREACH(str, lambda(void, (unsigned i, char e) {
-        str[i] = toupper(e);
-    }))
-
-    //puts(str);
-    assert(0 == strcmp(str, "ABCD"));
-
-    void decapitalize(unsigned i, char e) {
-        str[i] = tolower(e);
+    ARRAY_FOREACH(str, i) {
+        str[i] = toupper(str[i]);
     }
 
-    ARRAY_FOREACH(str, decapitalize);
+    assert(0 == strcmp(str, "ABCD"));
+
+    ARRAY_FOREACH(str, i) str[i] = tolower(str[i]);
     assert(0 == strcmp(str, "abcd"));
 
     int accum = 0;

@@ -10,7 +10,7 @@
 #error vector.h must undef all "template" macros
 #endif
 
-int main()
+bool test1(void)
 {
     VectInt v CLEANUP(cleanup_VectInt) = new_VectInt(1);
 
@@ -31,6 +31,13 @@ int main()
     v.foreach(&v, lambda(void, (unsigned i, int* e) {
          assert(*e == (i + 1));
     }));
+
+    return true;
+}
+
+int main()
+{
+    assert(test1());
 
     return 0;
 }
