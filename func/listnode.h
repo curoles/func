@@ -43,6 +43,15 @@ extern inline void list_reset(ListNode* node)
 #define LIST_HEAD(name) \
 struct ListNode name = LIST_NODE_INIT(name)
 
+/**
+ * list_entry - get the struct for this entry
+ * @ptr:	the &struct list_head pointer.
+ * @type:	the type of the struct this is embedded in.
+ * @member:	the name of the list_struct within the struct.
+ */
+#define LIST_ENTRY(ptr, type, member) \
+    ((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
+
 /*
  * Insert a new entry between two known consecutive entries. 
  *
@@ -139,14 +148,6 @@ void List_delete(ListNode* node)
 
 
 
-/**
- * list_entry - get the struct for this entry
- * @ptr:	the &struct list_head pointer.
- * @type:	the type of the struct this is embedded in.
- * @member:	the name of the list_struct within the struct.
- */
-#define List_entry(ptr, type, member) \
-    ((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
 /**
  * list_for_each	-	iterate over a list

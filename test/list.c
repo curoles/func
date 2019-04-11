@@ -43,10 +43,13 @@ bool test2(void)
         items[i].id = i;
     }
 
-    LIST_HEAD(list);
+    LIST_HEAD(list_head);
 
     ARRAY_FOREACH(items, i) {
-        list_insert_after(&list, &items[i].list);
+        list_insert_after(&list_head, &items[i].list);
+
+        Item* item = LIST_ENTRY(list_head.next, Item, list);
+        assert(item->id == i);
     }
 
     return true;
