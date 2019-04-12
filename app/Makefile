@@ -8,7 +8,7 @@ else
 APP_CFLAGS += -flto -O3
 endif
 
-APP_LIST := clrz
+APP_LIST := clrz chase
 APP_LIST +=
 
 .PHONY: app $(APP_LIST)
@@ -17,8 +17,12 @@ app: $(APP_LIST)
 
 define do_app
 	rm -rf $@
-	gcc $(APP_CFLAGS) $^ -o $@
+	gcc $(APP_CFLAGS) $^ -o $@ $(LDFLAGS)
 endef
 
 clrz: $(APP)/clrz/clrz.c $(APP)/clrz/text.c
+	$(call do_app)
+
+chase: LDFLAGS := $(LDFLAGS) -lncurses
+chase: $(addprefix $(APP)/chase/,main.c view.c model.c ctrl.c)
 	$(call do_app)

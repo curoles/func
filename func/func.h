@@ -18,6 +18,12 @@
 
 #define TRANSPARENT_UNION __attribute__((transparent_union))
 
+#ifndef ANCHOR_EXTERN_INLINE
+#define EXTERN_INLINE extern inline __attribute__((__gnu_inline__))
+#else
+#define EXTERN_INLINE inline
+#endif
+
 //#define likely(x)   __builtin_expect(!!(x), 1)
 //#define unlikely(x) __builtin_expect(!!(x), 0)
 
