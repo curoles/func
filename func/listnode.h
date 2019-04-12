@@ -87,7 +87,6 @@ void list_insert_after(ListNode* node, ListNode* new_node)
     list_insert__(new_node, node, node->next);
 }
 
-#if 0
 /**
  * List_insertBefore - add a new entry
  * @param new_node new entry to be added
@@ -96,28 +95,12 @@ void list_insert_after(ListNode* node, ListNode* new_node)
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-static inline
-void List_insertBefore(ListNode* node, ListNode* new_node)
+extern inline
+void list_insert_before(ListNode* node, ListNode* new_node)
 {
     // node.prev <-> new_node <-> node
-    List_insert__(new_node, node->prev, node);
+    list_insert__(new_node, node->prev, node);
 }
-
-/**
- * List_add - add a new entry
- * @param new_node new entry to be added
- * @param node list head to add new_node after
- *
- * Alias for List_insertAfter.
- * Insert a new entry after the specified head.
- * This is good for implementing stacks.
- */
-static inline
-void List_add(ListNode* node, ListNode* new_node)
-{
-    List_insertAfter(node, new_node);
-}
-
 
 /*
  * Delete a list entry by making the prev/next entries
@@ -126,8 +109,8 @@ void List_add(ListNode* node, ListNode* new_node)
  * This is only for internal list manipulation where we know
  * the prev/next entries already!
  */
-static inline
-void List_connectNodes__(ListNode* prev, ListNode* next)
+extern inline
+void list_connect_nodes__(ListNode* prev, ListNode* next)
 {
     next->prev = prev;
     prev->next = next;
@@ -138,10 +121,10 @@ void List_connectNodes__(ListNode* prev, ListNode* next)
  * @entry: the element to delete from the list.
  * Note: list_empty on entry does not return true after this, the entry is in an undefined state.
  */
-static inline
-void List_delete(ListNode* node)
+extern inline
+void list_delete(ListNode* node)
 {
-    List_connectNodes__(node->prev, node->next);
+    list_connect_nodes__(node->prev, node->next);
     node->next = (void *) 0;
     node->prev = (void *) 0;
 }
@@ -154,7 +137,7 @@ void List_delete(ListNode* node)
  * @pos:	the &struct list_head to use as a loop counter.
  * @head:	the head for your list.
  */
-#define List_forEach(head, iterator) \
+#define LIST_FOREACH(head, iterator) \
     for (iterator = (head)->next; iterator != (head); \
          iterator = iterator->next)
 
@@ -163,7 +146,7 @@ void List_delete(ListNode* node)
  * @pos:	the &struct list_head to use as a loop counter.
  * @head:	the head for your list.
  */
-#define List_forEachReverse(head, pos) \
+#define LIST_FOREACH_REVERSE(head, pos) \
     for (pos = (head)->prev; pos != (head); \
          pos = pos->prev)
 
@@ -174,10 +157,10 @@ void List_delete(ListNode* node)
  * @head:	the head for your list.
  * @member:	the name of the list_struct within the struct.
  */
-#define List_forEachEntry(head, member, pos)                 \
-    for (pos = List_entry((head)->next, typeof(*pos), member); \
+#define LIST_FOREACH_ENTRY(head, member, pos)                 \
+    for (pos = LIST_ENTRY((head)->next, typeof(*pos), member); \
         &pos->member != (head);                                \
-         pos = List_entry(pos->member.next, typeof(*pos), member))
+         pos = LIST_ENTRY(pos->member.next, typeof(*pos), member))
 
 /**
  * list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
@@ -186,12 +169,10 @@ void List_delete(ListNode* node)
  * @head:	the head for your list.
  * @member:	the name of the list_struct within the struct.
  */
-#define List_forEachEntrySafe(head, member, pos, n)			\
-	for (pos = List_entry((head)->next, typeof(*pos), member),	\
-		n = List_entry(pos->member.next, typeof(*pos), member);	\
+#define LIST_FOREACH_ENTRY_SAFE(head, member, pos, n)			\
+	for (pos = LIST_ENTRY((head)->next, typeof(*pos), member),	\
+		n = LIST_ENTRY(pos->member.next, typeof(*pos), member);	\
 	     &pos->member != (head); 					\
-	     pos = n, n = List_entry(n->member.next, typeof(*n), member))
+	     pos = n, n = LIST_ENTRY(n->member.next, typeof(*n), member))
 
 
-
-#endif
