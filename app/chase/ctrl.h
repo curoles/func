@@ -7,6 +7,9 @@
 
 typedef struct GameCtrl
 {
+    struct GameView* view;
+    struct GameModel* model;
+
     void (*run)(struct GameCtrl*);
 
 } GameCtrl;
@@ -18,4 +21,4 @@ void GameCtrl_cleanup(GameCtrl* ctrl)
 
 }
 
-GameCtrl new_GameCtrl();
+GameCtrl new_GameCtrl(struct GameView* view, struct GameModel* model);

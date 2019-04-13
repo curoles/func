@@ -13,7 +13,7 @@ int main(void)
 
     GameView view CLEANUP(GameView_cleanup) = new_GameView(&model);
 
-    GameCtrl ctrl CLEANUP(GameCtrl_cleanup) = new_GameCtrl();
+    GameCtrl ctrl CLEANUP(GameCtrl_cleanup) = new_GameCtrl(&view, &model);
 
     ctrl.run(&ctrl);
 
