@@ -9,43 +9,17 @@
 #include "model.h"
 
 static
-void display_welcome_message()
-{
-    static char* msg[] = {
-    "Welcome to the game of Chase!",
-    "Igor Lesik 2019",
-    "Press arrow keys to move cursor.",
-    "Press 'q' key to quit game at any time.",
-    "OK"
-    };
-
-    int y = LINES/3;
-    int x = COLS/2;
-
-    mvaddstr(y,   x - strlen(msg[0])/2, msg[0]);
-    mvaddstr(y+1, x - strlen(msg[1])/2, msg[1]);
-
-    mvaddstr(y+3, x - strlen(msg[2])/2, msg[2]);
-    mvaddstr(y+4, x - strlen(msg[3])/2, msg[3]);
-
-    mvaddstr(y+6, x - strlen(msg[4])/2, msg[4]);
-
-    getch();
-    clear();
-}
-
-static
 void GameCtrl_run(
     struct GameCtrl* ctrl
 )
 {
-    display_welcome_message();
-
     GameView* view = ctrl->view;
     GameModel* model = ctrl->model;
 
-    const unsigned int rows = LINES;
-    const unsigned int cols = COLS;
+    view->display_welcome();
+
+    const unsigned int rows = model->field_height;
+    const unsigned int cols = model->field_width;
 
     const unsigned int width  = model->runner_width;
     const unsigned int height = model->runner_height;
@@ -54,6 +28,10 @@ void GameCtrl_run(
     unsigned int y = model->runner_pos.y;
 
     view->update(view);
+
+    // If delay is positive, then read blocks for delay milliseconds,
+    // and returns ERR if there is still no input.
+    timeout(1*1000);
 
     int ch;
 
@@ -76,18 +54,23 @@ void GameCtrl_run(
 	    if ( x < (cols - width) )
 		++x;
 	    break;
-	case KEY_HOME:
-	    x = 0;
-	    y = 0;
-	    break;
-	case KEY_END:
-	    x = (cols - width);
-	    y = (rows - height);
-	    break;
+	//case KEY_HOME:
+	//    x = 0;
+	//    y = 0;
+	//    break;
+	//case KEY_END:
+	//    x = (cols - width);
+	//    y = (rows - height);
+	//    break;
 	}
 
-        model->update_runner_pos(model, x, y);
-        view->update(view);
+        if (x != model->runner_pos.x || y != model->runner_pos.y) {
+            model->update_runner_pos(model, x, y);
+            view->update(view);
+        } else if (ch == ERR) {
+            model->user_timeout(model);
+            view->update(view);
+        }
     }
 }
 

@@ -9,7 +9,12 @@
 
 int main(void)
 {
-    GameModel model CLEANUP(GameModel_cleanup) = new_GameModel();
+    if (initscr() == NULL) {
+        fprintf(stderr, "Error initialising ncurses.\n");
+	exit(EXIT_FAILURE);
+    }
+
+    GameModel model CLEANUP(GameModel_cleanup) = new_GameModel(COLS, LINES);
 
     GameView view CLEANUP(GameView_cleanup) = new_GameView(&model);
 

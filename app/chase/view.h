@@ -13,6 +13,7 @@ typedef struct GameView
 
 
     void (*update)(struct GameView*);
+    void (*display_welcome)();
 
 } GameView;
 
