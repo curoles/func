@@ -2,28 +2,44 @@
 #include "ctrl.h"
 #undef ANCHOR_EXTERN_INLINE
 
+#include <string.h>
 #include <ncurses.h>
 
 #include "view.h"
 #include "model.h"
 
-/*static
+static
 void display_welcome_message()
 {
-    printw("Welcome to the game of Chase!\n");
-    printw("Press 'q' key to quit at any time.\n");
-    printw("Press arrow keys to move.\n");
-    printw("Press any key to start the game.\n");
+    static char* msg[] = {
+    "Welcome to the game of Chase!",
+    "Igor Lesik 2019",
+    "Press arrow keys to move cursor.",
+    "Press 'q' key to quit game at any time.",
+    "OK"
+    };
+
+    int y = LINES/3;
+    int x = COLS/2;
+
+    mvaddstr(y,   x - strlen(msg[0])/2, msg[0]);
+    mvaddstr(y+1, x - strlen(msg[1])/2, msg[1]);
+
+    mvaddstr(y+3, x - strlen(msg[2])/2, msg[2]);
+    mvaddstr(y+4, x - strlen(msg[3])/2, msg[3]);
+
+    mvaddstr(y+6, x - strlen(msg[4])/2, msg[4]);
+
     getch();
-    //clear();
-}*/
+    clear();
+}
 
 static
 void GameCtrl_run(
     struct GameCtrl* ctrl
 )
 {
-    //display_welcome_message();
+    display_welcome_message();
 
     GameView* view = ctrl->view;
     GameModel* model = ctrl->model;
@@ -34,8 +50,8 @@ void GameCtrl_run(
     const unsigned int width  = model->runner_width;
     const unsigned int height = model->runner_height;
 
-    unsigned int x = model->runner_x;
-    unsigned int y = model->runner_y;
+    unsigned int x = model->runner_pos.x;
+    unsigned int y = model->runner_pos.y;
 
     view->update(view);
 

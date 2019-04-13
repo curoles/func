@@ -10,14 +10,43 @@
 
 #include "model.h"
 
+enum {FIELD_COLORS=1, RUNNER_COLORS};
+
+/*
+ * https://www.linuxjournal.com/content/programming-color-ncurses
+ */
+static
+void GameView_init_colors()
+{
+    start_color();
+    init_pair(FIELD_COLORS, COLOR_BLACK, COLOR_BLACK);
+    init_pair(RUNNER_COLORS, COLOR_YELLOW, COLOR_WHITE);
+    //init_pair(2, COLOR_CYAN, COLOR_BLUE);
+    //init_pair(3, COLOR_BLACK, COLOR_WHITE);
+    //init_pair(4, COLOR_RED, COLOR_MAGENTA);
+}
+
 static
 void GameView_update(GameView* view)
 {
-    assert(view && view->runner);
+    GameModel* model = view->model;
 
-    mvderwin(view->runner, view->model->runner_y, view->model->runner_x);
+    unsigned int x = model->runner_prev_pos.x;
+    unsigned int y = model->runner_prev_pos.y;
 
-    mvwaddch(view->runner, 0, 0, '*');
+    attron(COLOR_PAIR(FIELD_COLORS));
+    mvaddch(y, x, ' ');
+    attroff(COLOR_PAIR(FIELD_COLORS));
+
+    x = model->runner_pos.x;
+    y = model->runner_pos.y;
+
+    attron(COLOR_PAIR(RUNNER_COLORS));
+    mvaddch(y, x, ' ');
+    attroff(COLOR_PAIR(RUNNER_COLORS));
+
+    // also move cursor
+    move(y, x);
 
     refresh();
 }
@@ -39,8 +68,8 @@ new_GameView(struct GameModel* model)
     // tell curses not to echo the input back to the screen
     noecho();
 
-    // hide cursor
-    curs_set(0);
+    // show cursor
+    curs_set(2);
 
     // clear the screen
     clear();
@@ -48,11 +77,11 @@ new_GameView(struct GameModel* model)
     // enable keypad (for arrow keys)
     keypad(mainwin, TRUE);
 
+    if (has_colors()) GameView_init_colors();
+
     GameView game_view = {
         .model   = model,
         .mainwin = mainwin,
-        .runner  = subwin(mainwin, model->runner_height, model->runner_width,
-                          model->runner_y, model->runner_x),
         .update  = GameView_update
     };
 

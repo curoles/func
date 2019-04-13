@@ -5,13 +5,19 @@
 
 #include "func/func.h"
 
+typedef struct Position 
+{
+    unsigned int x, y;
+
+} Position;
+
 typedef struct GameModel
 {
     const unsigned int runner_width;
     const unsigned int runner_height;
 
-    unsigned int runner_x;
-    unsigned int runner_y;
+    Position runner_pos;
+    Position runner_prev_pos;
 
     void (*update_runner_pos)(struct GameModel* model,
         unsigned int x, unsigned int y);
