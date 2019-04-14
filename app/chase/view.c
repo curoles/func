@@ -83,11 +83,15 @@ void GameView_update(GameView* view)
 static
 void GameView_show_maze(GameView* view)
 {
+    Maze* maze = &view->model->maze;
+
     attron(COLOR_PAIR(MAZE_COLORS));
 
-    for (unsigned int i = 0; i < view->model->maze_size; ++i) {
-        Position pos = view->model->maze[i];
-        mvaddch(pos.y, pos.x, ACS_CKBOARD);
+    for (unsigned int x = 0; x < maze->width; ++x) {
+        for (unsigned int y = 0; y < maze->height; ++y) {
+            if (Maze_at(maze, x, y))
+                mvaddch(y, x, ACS_CKBOARD);
+        }
     }
 
     attroff(COLOR_PAIR(MAZE_COLORS));

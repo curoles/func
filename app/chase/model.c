@@ -5,13 +5,9 @@
 static
 bool GameModel_is_maze_pos(GameModel* model, unsigned int x, unsigned int y)
 {
-    // TODO optimize, sort points of maze for quick search (bisec?)
-    for (unsigned int i = 0; i < model->maze_size; ++i) {
-        if (model->maze[i].x == x && model->maze[i].y == y)
-            return true;
-    }
+    Maze* maze = &model->maze;
 
-    return false;
+    return maze->at(maze, x, y);
 }
 
 static
@@ -37,7 +33,7 @@ void GameModel_update(
     unsigned int runner_y
 )
 {
-    GameModel_hunt(model); // TODO calculate hunters move when user thinks
+    GameModel_hunt(model); // TODO calculate hunter's move when user thinks
     model->runner_prev_pos = model->runner_pos;
 
     model->runner_pos.x = runner_x;
@@ -52,10 +48,8 @@ void GameModel_user_timeout(GameModel* model)
 }
 
 static
-Position* make_maze(unsigned int size, unsigned int width, unsigned int height)
+void make_maze(Maze* maze, unsigned int size, unsigned int width, unsigned int height)
 {
-    Position* maze = (Position*)calloc(size, sizeof(Position));
-
     /* initialize random seed: */
     srand(time(NULL));
 
@@ -69,7 +63,7 @@ Position* make_maze(unsigned int size, unsigned int width, unsigned int height)
     for (unsigned int i = 0; i < size; )
     {
         unsigned int dir = rand_0_8();
-        if (dir == 0) {
+        if (dir == 0) { // jump and build maze in some other location
             x = rand_width();
             y = rand_height();
             continue;
@@ -81,23 +75,12 @@ Position* make_maze(unsigned int size, unsigned int width, unsigned int height)
         case 7 ... 8: y = (y > 3)? y-1:y+1; break;
         }
 
-        int pos_already_exist = 0;
-        for (unsigned int j = 0; j < i; ++j) {
-            if (maze[j].x == x && maze[j].y == y) {
-                pos_already_exist = 1;
-                break;
-            }
-        }
+        if (maze->at(maze, x, y)) continue;
 
-        if (pos_already_exist) continue;
-
-        maze[i].x = x;
-        maze[i].y = y;
+        maze->set(maze, x, y, true);
 
         ++i;
     }
- 
-    return maze;
 }
 
 GameModel
@@ -115,11 +98,13 @@ new_GameModel(unsigned int width, unsigned int height)
         .hunter_pos = {width-1, height-1},
         .hunter_prev_pos = {width-1, height-1},
         .maze_size = maze_size,
-        .maze = make_maze(maze_size, width, height),
+        .maze = new_Maze(width, height),
         .update_runner_pos = GameModel_update,
         .user_timeout = GameModel_user_timeout,
         .is_maze_pos = GameModel_is_maze_pos
     };
+
+    make_maze(&game_model.maze, maze_size, width, height);
 
     return game_model;
 }

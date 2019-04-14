@@ -3,12 +3,10 @@
 #include <stdlib.h>
 
 #include "func/func.h"
+#include "func/xypos.h"
+#include "func/maze.h"
 
-typedef struct Position 
-{
-    unsigned int x, y;
-
-} Position;
+typedef XYPointUInt Position;
 
 typedef struct GameModel
 {
@@ -25,7 +23,7 @@ typedef struct GameModel
     Position hunter_prev_pos;
 
     const unsigned int maze_size;
-    Position* maze;
+    Maze maze;
 
     void (*update_runner_pos)(struct GameModel* model,
         unsigned int x, unsigned int y);
@@ -41,7 +39,7 @@ typedef struct GameModel
 EXTERN_INLINE
 void GameModel_cleanup(GameModel* model)
 {
-    free(model->maze);
+    Maze_cleanup(&model->maze);
 }
 
 GameModel new_GameModel(unsigned int width, unsigned int height);
