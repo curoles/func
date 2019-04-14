@@ -12,7 +12,7 @@
 #include "func/foreach.h"
 #include "model.h"
 
-enum {FIELD_COLORS=1, RUNNER_COLORS, HUNTER_COLORS};
+enum {FIELD_COLORS=1, RUNNER_COLORS, HUNTER_COLORS, MAZE_COLORS};
 
 /*
  * https://www.linuxjournal.com/content/programming-color-ncurses
@@ -24,6 +24,7 @@ void GameView_init_colors()
     init_pair(FIELD_COLORS, COLOR_BLACK, COLOR_BLACK);
     init_pair(RUNNER_COLORS, COLOR_YELLOW, COLOR_WHITE);
     init_pair(HUNTER_COLORS, COLOR_RED, COLOR_RED);
+    init_pair(MAZE_COLORS, COLOR_CYAN, COLOR_GREEN);
     //init_pair(2, COLOR_CYAN, COLOR_BLUE);
     //init_pair(3, COLOR_BLACK, COLOR_WHITE);
     //init_pair(4, COLOR_RED, COLOR_MAGENTA);
@@ -77,6 +78,21 @@ void GameView_update(GameView* view)
 {
     GameView_update_hunter(view);
     GameView_update_runner(view);
+
+    refresh();
+}
+
+static
+void GameView_show_maze(GameView* view)
+{
+    attron(COLOR_PAIR(MAZE_COLORS));
+
+    for (unsigned int i = 0; i < view->model->maze_size; ++i) {
+        Position pos = view->model->maze[i];
+        mvaddch(pos.y, pos.x, ACS_CKBOARD);
+    }
+
+    attroff(COLOR_PAIR(MAZE_COLORS));
 
     refresh();
 }
@@ -137,6 +153,7 @@ new_GameView(struct GameModel* model)
         .model   = model,
         .mainwin = mainwin,
         .update  = GameView_update,
+        .show_maze  = GameView_show_maze,
         .display_welcome = GameView_display_welcome
     };
 

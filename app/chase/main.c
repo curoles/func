@@ -14,6 +14,12 @@ int main(void)
 	exit(EXIT_FAILURE);
     }
 
+    if (COLS < 30 || LINES < 20) {
+        fprintf(stderr, "Terminal window %dx%d is too small, make it bigger.\n", COLS, LINES);
+        endwin();
+	exit(EXIT_FAILURE);
+    }
+
     GameModel model CLEANUP(GameModel_cleanup) = new_GameModel(COLS, LINES);
 
     GameView view CLEANUP(GameView_cleanup) = new_GameView(&model);

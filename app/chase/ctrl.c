@@ -27,11 +27,12 @@ void GameCtrl_run(
     unsigned int x = model->runner_pos.x;
     unsigned int y = model->runner_pos.y;
 
+    view->show_maze(view);
     view->update(view);
 
-    // If delay is positive, then read blocks for delay milliseconds,
+    // If delay is positive, then read (getch) blocks for delay milliseconds,
     // and returns ERR if there is still no input.
-    timeout(1*1000);
+    timeout(2*1000);
 
     int ch;
 
@@ -39,19 +40,19 @@ void GameCtrl_run(
     while ( (ch = getch()) != 'q' ) {
 	switch ( ch ) {
 	case KEY_UP:
-	    if ( y > 0 )
+	    if (y > 0 && !model->is_maze_pos(model, x, y-1))
 		--y;
 	    break;
 	case KEY_DOWN:
-	    if ( y < (rows - height) )
+	    if (y < (rows - height) && !model->is_maze_pos(model, x, y+1))
 		++y;
 	    break;
 	case KEY_LEFT:
-	    if ( x > 0 )
+	    if (x > 0 && !model->is_maze_pos(model, x-1, y))
 		--x;
 	    break;
 	case KEY_RIGHT:
-	    if ( x < (cols - width) )
+	    if (x < (cols - width) && !model->is_maze_pos(model, x+1, y))
 		++x;
 	    break;
 	//case KEY_HOME:
