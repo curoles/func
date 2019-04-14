@@ -9,6 +9,8 @@
 #include <stdarg.h>
 #include <ctype.h>
 
+#include "func/func.h"
+
 struct PrintCirBuf
 {
     void (*printf)(struct PrintCirBuf*, const char* fmt, ...);
@@ -22,7 +24,7 @@ struct PrintCirBuf
 
 typedef struct PrintCirBuf PrintCirBuf;
 
-extern inline
+EXTERN_INLINE
 void cprintf(PrintCirBuf* buf, const char* fmt, ...)
 {
     va_list args;
@@ -37,7 +39,7 @@ void cprintf(PrintCirBuf* buf, const char* fmt, ...)
     }
 }
 
-extern inline
+EXTERN_INLINE
 void cprintf_dump(PrintCirBuf* pb,  FILE* f)
 {
     f = f ? :pb->file;
@@ -50,7 +52,7 @@ void cprintf_dump(PrintCirBuf* pb,  FILE* f)
     putc('\n', f);
 }
 
-extern inline
+EXTERN_INLINE
 PrintCirBuf* new_PrintCirBuf(FILE* file, size_t size)
 {
     PrintCirBuf* buf = (PrintCirBuf*)malloc(sizeof(PrintCirBuf) + size);

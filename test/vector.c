@@ -1,5 +1,7 @@
 #include <assert.h>
 
+#define ANCHOR_EXTERN_INLINE
+
 #define T int
 #define V VectInt
 #define new_V new_VectInt

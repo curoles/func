@@ -12,10 +12,10 @@
 #include "func/func.h"
 #include "func/result.h"
 
-extern inline
+EXTERN_INLINE
 void fcleanup(FILE** f) { fclose(*f); }
 
-extern inline
+EXTERN_INLINE
 __attribute__((nonnull (1, 2, 3)))
 Result fopen_process_close(
     const char filename[],
@@ -35,7 +35,7 @@ Result fopen_process_close(
     return res;
 }
 
-extern inline
+EXTERN_INLINE
 __attribute__((nonnull (1, 2)))
 bool fopenable(
     const char filename[],

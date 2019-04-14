@@ -55,14 +55,6 @@ void GameCtrl_run(
 	    if (x < (cols - width) && !model->is_maze_pos(model, x+1, y))
 		++x;
 	    break;
-	//case KEY_HOME:
-	//    x = 0;
-	//    y = 0;
-	//    break;
-	//case KEY_END:
-	//    x = (cols - width);
-	//    y = (rows - height);
-	//    break;
 	}
 
         if (x != model->runner_pos.x || y != model->runner_pos.y) {

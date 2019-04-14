@@ -30,7 +30,7 @@ typedef struct V
     void (*foreach)(struct V*, void (*)(unsigned,T*));
 } V;
 
-extern inline
+EXTERN_INLINE
 void cleanup_V(V* v)
 {
     if (v != NULL && v->item != NULL) {
@@ -39,7 +39,7 @@ void cleanup_V(V* v)
     }
 }
 
-extern inline
+EXTERN_INLINE
 V new_V(unsigned init_sz)
 {
     void resize(V* v, unsigned amount) {

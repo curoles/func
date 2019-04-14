@@ -3,6 +3,8 @@
 #include <alloca.h>
 #include <stdio.h>
 
+#include "func/func.h"
+
 /** Use current function stack to allocate memory for snprintf.
 *
 * @return pointer to "printed" string, memory will be automatically
@@ -26,3 +28,13 @@
     char *_ss_ret = __builtin_alloca(_ss_size+1);           \
     snprintf(_ss_ret, _ss_size+1, ##__VA_ARGS__);           \
     _ss_ret; })
+
+EXTERN_INLINE
+bool hasstr(const char* s, const char* a[], size_t len)
+{
+    for (unsigned i = 0; i < len && a[i] != NULL; ++i) {
+        if (0 == strcmp(s, a[i])) return true;
+    }
+
+    return false;
+}

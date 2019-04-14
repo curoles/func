@@ -2,9 +2,7 @@
  * Install ncurses on Ubuntu:
  * sudo apt-get install libncurses5-dev libncursesw5-dev
  */
-#define ANCHOR_EXTERN_INLINE
 #include "view.h"
-#undef ANCHOR_EXTERN_INLINE
 
 #include <assert.h>
 #include <string.h>

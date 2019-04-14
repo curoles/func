@@ -1,6 +1,8 @@
 #pragma once
 
-extern inline
+#include "func/func.h"
+
+EXTERN_INLINE
 int factorial(int n, int acum)
 {
 tailcall__:

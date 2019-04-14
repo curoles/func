@@ -1,6 +1,4 @@
-#define ANCHOR_EXTERN_INLINE
 #include "model.h"
-#undef ANCHOR_EXTERN_INLINE
 
 #include <time.h>
 

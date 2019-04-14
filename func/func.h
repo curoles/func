@@ -21,7 +21,7 @@
 #ifndef ANCHOR_EXTERN_INLINE
 #define EXTERN_INLINE extern inline __attribute__((__gnu_inline__))
 #else
-#define EXTERN_INLINE inline
+#define EXTERN_INLINE extern inline
 #endif
 
 //#define likely(x)   __builtin_expect(!!(x), 1)

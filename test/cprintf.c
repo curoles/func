@@ -1,3 +1,4 @@
+#define ANCHOR_EXTERN_INLINE
 #include "func/cprintf.h"
 
 PrintCirBuf printbuf = {
