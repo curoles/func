@@ -47,6 +47,7 @@ void GameModel_user_timeout(GameModel* model)
     GameModel_hunt(model); 
 }
 
+//TODO check https://en.wikipedia.org/wiki/Maze_generation_algorithm
 static
 void make_maze(Maze* maze, unsigned int size, unsigned int width, unsigned int height)
 {

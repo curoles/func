@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "func/func.h"
 #include "func/xypos.h"
@@ -59,4 +60,53 @@ Maze new_Maze(unsigned int width, unsigned int height)
     };
 
     return maze;
+}
+
+
+typedef struct BFSNode
+{
+    XYPointUInt p;  // The cordinates of a cell
+    int dist;       // cell's distance of from the source
+} BFSNode;
+
+#define T BFSNode
+#define V VectBFSNode
+#define new_V new_VectBFSNode
+#define cleanup_V cleanup_VectBFSNode
+#include "func/vector.h"
+
+/**
+ *
+ * @return distance from p1 to p2, -1 if can't find path
+ */
+EXTERN_INLINE
+int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
+{
+    assert(p1.x < maze->width && p2.x < maze->width);
+    assert(p1.y < maze->height && p2.y < maze->height);
+
+    //typedef XYPointUInt Point;
+
+    VectBFSNode path CLEANUP(cleanup_VectBFSNode) = new_VectBFSNode(maze->width * maze->height);
+
+    bool visited[maze->height][maze->width]; // struct to keep track of visited cells
+    memset(visited, false, sizeof(visited)); // mark all cells as not visited
+
+    // Mark the source cell as visited 
+    visited[p1.y][p1.x] = true;
+
+    // Distance of source cell is 0
+    //BFSNode node = {p1, 0};
+#if 0
+    q.push(s);  // Enqueue source cell
+  
+    // Do a BFS starting from source cell
+    while (!path.empty())
+    {
+
+
+    }
+#endif
+    // Return -1 if destination cannot be reached
+    return -1;
 }
