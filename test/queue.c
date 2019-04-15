@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #define ANCHOR_EXTERN_INLINE
 
@@ -43,9 +44,28 @@ bool test1(void)
     return true;
 }
 
+bool test2(void)
+{
+    QueueInt q CLEANUP(cleanup_QueueInt) = new_QueueInt(1);
+
+    for (unsigned int i = 0; i < 100; ++i) {
+        q.push_back(&q, i);
+        q.push_back(&q, i);
+        q.pop_front(&q);
+    }
+
+    q.foreach(&q, lambda(void, (unsigned i, int* e) {
+         //printf("%u %d %u\n", i, *e, 50 + i/2);
+         assert(*e == (50 + i/2));
+    }));
+
+    return true;
+}
+
 int main()
 {
     assert(test1());
+    assert(test2());
 
     return 0;
 }

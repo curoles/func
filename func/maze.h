@@ -70,10 +70,10 @@ typedef struct BFSNode
 } BFSNode;
 
 #define T BFSNode
-#define V VectBFSNode
-#define new_V new_VectBFSNode
-#define cleanup_V cleanup_VectBFSNode
-#include "func/vector.h"
+#define Q QueueBFSNode
+#define new_Q new_QueueBFSNode
+#define cleanup_Q cleanup_QueueBFSNode
+#include "func/queue.h"
 
 /**
  *
@@ -85,9 +85,12 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
     assert(p1.x < maze->width && p2.x < maze->width);
     assert(p1.y < maze->height && p2.y < maze->height);
 
-    //typedef XYPointUInt Point;
+    bool is_valid(XYPointInt p) {
+        return (p.x >=0 && p.x < maze->width) &&
+               (p.y >=0 && p.y < maze->height) && !maze->at(maze, p.x, p.y);
+    }
 
-    VectBFSNode path CLEANUP(cleanup_VectBFSNode) = new_VectBFSNode(maze->width * maze->height);
+    QueueBFSNode path CLEANUP(cleanup_QueueBFSNode) = new_QueueBFSNode(maze->width * maze->height);
 
     bool visited[maze->height][maze->width]; // struct to keep track of visited cells
     memset(visited, false, sizeof(visited)); // mark all cells as not visited
@@ -96,17 +99,38 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
     visited[p1.y][p1.x] = true;
 
     // Distance of source cell is 0
-    //BFSNode node = {p1, 0};
-#if 0
-    q.push(s);  // Enqueue source cell
-  
+    BFSNode node = {p1, 0};
+
+    path.push_back(&path, node);  // Enqueue source cell
+
+    static XYPointInt neighbours[4] = {{1,0},{-1,0},{0,1},{0,-1}};
+
     // Do a BFS starting from source cell
-    while (!path.empty())
+    while (path.size > 0)
     {
+        node = *(path.front(&path));
 
+        // If we have reached the destination cell, we are done.
+        if (node.p.x == p2.x && node.p.y == p2.y)
+            return node.dist;
 
+        // Otherwise dequeue the front cell in the queue
+        // and enqueue its adjacent cells.
+        path.pop_front(&path);
+
+        for (unsigned int i = 0; i < 4; ++i) {
+            XYPointInt p = {node.p.x + neighbours[i].x, node.p.y + neighbours[i].y};
+
+            // if adjacent cell is valid and not visited yet, enqueue it
+            if (is_valid(p) && !visited[p.y][p.x]) {
+                // mark cell as visited and enqueue it
+                visited[p.y][p.x] = true;
+                BFSNode adjnode = {.p = {p.x,p.y}, .dist = node.dist + 1};
+                path.push_back(&path, adjnode);
+            }
+        }
     }
-#endif
+
     // Return -1 if destination cannot be reached
     return -1;
 }
