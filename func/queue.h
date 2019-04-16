@@ -26,6 +26,7 @@ typedef struct Q
     T* item;
 
     void (*cleanup)(struct Q*);
+    void (*reset)(struct Q*);
     void (*resize)(struct Q*, unsigned amount);
     void (*push_back)(struct Q*, T);
     T    (*pop_front)(struct Q*);
@@ -85,12 +86,17 @@ Q new_Q(unsigned init_sz)
             visitor(i, &q->item[(q->first + i) % q->space]);
     }
 
+    void reset(Q* q) {
+        q->first = q->last = q->size = 0;
+    }
+
     Q q = {.space = 0,
            .size  = 0,
            .first = 0,
            .last  = 0,
            .item  = NULL,
            .cleanup   = cleanup_Q,
+           .reset     = reset,
            .resize    = resize,
            .push_back = push_back,
            .pop_front = pop_front,

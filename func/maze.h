@@ -67,6 +67,7 @@ typedef struct BFSNode
 {
     XYPointUInt p;  // The cordinates of a cell
     int dist;       // cell's distance of from the source
+    XYPointUInt o;  // Origin from where we arrived to p
 } BFSNode;
 
 #define T BFSNode
@@ -80,7 +81,10 @@ typedef struct BFSNode
  * @return distance from p1 to p2, -1 if can't find path
  */
 EXTERN_INLINE
-int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
+int Maze_breadth_first_search(Maze* maze,
+    XYPointUInt p1, XYPointUInt p2,
+    QueueBFSNode* path
+)
 {
     assert(p1.x < maze->width && p2.x < maze->width);
     assert(p1.y < maze->height && p2.y < maze->height);
@@ -90,8 +94,6 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
                (p.y >=0 && p.y < maze->height) && !maze->at(maze, p.x, p.y);
     }
 
-    QueueBFSNode path CLEANUP(cleanup_QueueBFSNode) = new_QueueBFSNode(maze->width * maze->height);
-
     bool visited[maze->height][maze->width]; // struct to keep track of visited cells
     memset(visited, false, sizeof(visited)); // mark all cells as not visited
 
@@ -99,16 +101,16 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
     visited[p1.y][p1.x] = true;
 
     // Distance of source cell is 0
-    BFSNode node = {p1, 0};
+    BFSNode node = {p1, 0, p1};
 
-    path.push_back(&path, node);  // Enqueue source cell
+    path->push_back(path, node);  // Enqueue source cell
 
     static XYPointInt neighbours[4] = {{1,0},{-1,0},{0,1},{0,-1}};
 
     // Do a BFS starting from source cell
-    while (path.size > 0)
+    while (path->size > 0)
     {
-        node = *(path.front(&path));
+        node = *(path->front(path));
 
         // If we have reached the destination cell, we are done.
         if (node.p.x == p2.x && node.p.y == p2.y)
@@ -116,7 +118,7 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
 
         // Otherwise dequeue the front cell in the queue
         // and enqueue its adjacent cells.
-        path.pop_front(&path);
+        path->pop_front(path);
 
         for (unsigned int i = 0; i < 4; ++i) {
             XYPointInt p = {node.p.x + neighbours[i].x, node.p.y + neighbours[i].y};
@@ -125,8 +127,8 @@ int Maze_breadth_first_search(Maze* maze, XYPointUInt p1, XYPointUInt p2)
             if (is_valid(p) && !visited[p.y][p.x]) {
                 // mark cell as visited and enqueue it
                 visited[p.y][p.x] = true;
-                BFSNode adjnode = {.p = {p.x,p.y}, .dist = node.dist + 1};
-                path.push_back(&path, adjnode);
+                BFSNode adjnode = {.p = {p.x,p.y}, .dist = node.dist + 1, .o = node.p};
+                path->push_back(path, adjnode);
             }
         }
     }
