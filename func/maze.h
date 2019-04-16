@@ -81,9 +81,11 @@ typedef struct BFSNode
  * @return distance from p1 to p2, -1 if can't find path
  */
 EXTERN_INLINE
-int Maze_breadth_first_search(Maze* maze,
-    XYPointUInt p1, XYPointUInt p2,
-    QueueBFSNode* path
+int Maze_breadth_first_search(
+    Maze* maze,     ///< [in] map of maze
+    XYPointUInt p1, ///< [in] start point
+    XYPointUInt p2, ///< [in] finish/destination point
+    QueueBFSNode* path ///< [out] front is destination point, then all frontier
 )
 {
     assert(p1.x < maze->width && p2.x < maze->width);
@@ -135,4 +137,34 @@ int Maze_breadth_first_search(Maze* maze,
 
     // Return -1 if destination cannot be reached
     return -1;
+}
+
+EXTERN_INLINE
+int Maze_breadth_first_path(
+    Maze* maze,
+    XYPointUInt p1,
+    XYPointUInt p2,
+    QueueBFSNode* crawler, // [out] frontier
+    QueueBFSNode* path     // [out] path from start to finish
+)
+{
+    crawler->reset(crawler);
+    path->reset(path);
+
+    const int dist = Maze_breadth_first_search(maze, p1, p2, crawler);
+
+    if (dist < 1) return dist;
+
+    path->push_back(path, *(crawler->front(crawler)));
+
+    XYPointUInt p;
+
+    for (int d = dist - 1; d > 0; --d) {
+        p = crawler->front(crawler)->o;
+        crawler->reset(crawler);
+        Maze_breadth_first_search(maze, p1, p, crawler);
+        path->push_back(path, *(crawler->front(crawler)));
+    }
+
+    return dist;
 }
