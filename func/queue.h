@@ -31,6 +31,7 @@ typedef struct Q
     void (*push_back)(struct Q*, T);
     T    (*pop_front)(struct Q*);
     T*   (*front)(struct Q*);
+    T*   (*back)(struct Q*);
     void (*foreach)(struct Q*, void (*)(unsigned,T*));
 } Q;
 
@@ -81,6 +82,11 @@ Q new_Q(unsigned init_sz)
         return &q->item[q->first];
     }
 
+    T* back(Q* q) {
+        if (q->size == 0) return NULL;
+        return &q->item[(q->last == q->space)? 0 : (q->last - 1)];
+    }
+
     void foreach(struct Q* q, void (*visitor)(unsigned,T*)) {
         for (unsigned i = 0; i < q->size; ++i)
             visitor(i, &q->item[(q->first + i) % q->space]);
@@ -101,6 +107,7 @@ Q new_Q(unsigned init_sz)
            .push_back = push_back,
            .pop_front = pop_front,
            .front     = front,
+           .back      = back,
            .foreach   = foreach
     };
 

@@ -13,17 +13,21 @@ bool GameModel_is_maze_pos(GameModel* model, unsigned int x, unsigned int y)
 static
 void GameModel_hunt(GameModel* model)
 {
-    const Position target = model->runner_pos;
-    Position pos = model->hunter_pos;
+    int dist = Maze_breadth_first_path(&model->maze,
+        model->hunter_pos, model->runner_pos,
+        &model->crawler, &model->path);
 
-    if (target.x < pos.x)      --pos.x;
-    else if (target.x > pos.x) ++pos.x;
+    assert(dist >= 0);
+    if (model->path.size == 0) return;
 
-    if (target.y < pos.y)      --pos.y;
-    else if (target.y > pos.y) ++pos.y;
+    __auto_type node = model->path.back(&model->path);
 
     model->hunter_prev_pos = model->hunter_pos;
-    model->hunter_pos = pos;
+    model->hunter_pos = node->p;
+
+    //printf("{%u %u} -> {%u %u}\n",
+    //model->hunter_prev_pos.x, model->hunter_prev_pos.y,
+    //model->hunter_pos.x, model->hunter_pos.y);
 }
 
 static
@@ -100,6 +104,8 @@ new_GameModel(unsigned int width, unsigned int height)
         .hunter_prev_pos = {width-1, height-1},
         .maze_size = maze_size,
         .maze = new_Maze(width, height),
+        .crawler = new_QueueBFSNode(width * height),
+        .path = new_QueueBFSNode(width * height),
         .update_runner_pos = GameModel_update,
         .user_timeout = GameModel_user_timeout,
         .is_maze_pos = GameModel_is_maze_pos

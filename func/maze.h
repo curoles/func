@@ -105,9 +105,10 @@ int Maze_breadth_first_search(
     // Distance of source cell is 0
     BFSNode node = {p1, 0, p1};
 
+    path->reset(path);
     path->push_back(path, node);  // Enqueue source cell
 
-    static XYPointInt neighbours[4] = {{1,0},{-1,0},{0,1},{0,-1}};
+    const XYPointInt neighbours[4] = {{1,0},{-1,0},{0,1},{0,-1}};
 
     // Do a BFS starting from source cell
     while (path->size > 0)

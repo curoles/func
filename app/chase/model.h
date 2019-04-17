@@ -25,6 +25,9 @@ typedef struct GameModel
     const unsigned int maze_size;
     Maze maze;
 
+    QueueBFSNode crawler;
+    QueueBFSNode path;
+
     void (*update_runner_pos)(struct GameModel* model,
         unsigned int x, unsigned int y);
 
@@ -39,6 +42,8 @@ typedef struct GameModel
 EXTERN_INLINE
 void GameModel_cleanup(GameModel* model)
 {
+    cleanup_QueueBFSNode(&model->crawler);
+    cleanup_QueueBFSNode(&model->path);
     Maze_cleanup(&model->maze);
 }
 
